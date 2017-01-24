@@ -1,0 +1,55 @@
+require 'nokogiri'
+require 'open-uri'
+require 'mechanize'
+
+
+class Marmiton
+
+  attr_reader :description
+  attr_accessor :url
+
+  def initialize
+  end
+
+  def scraping
+    #urls = []
+    # dificulty_fi = "&dif=#{dificulty}" if dificulty != 0
+    arrondisement = 75015
+    pages = 0
+    1.times do |n|
+      pages += 1
+      url = open("https://www.leboncoin.fr/locations/offres/ile_de_france/?th=1&location=Paris%2075010&parrot=0&sqs=3&sqe=5&ros=2&roe=2")
+      doc = Nokogiri::HTML(url, nil, 'utf-8')
+      doc.css('.list_item').each do |element|
+      #url = element.css('a')[0]
+      link = element['href']
+      p link
+      check = Mechanize.new
+
+      page = check.get("http:"+"#{link}")
+
+      link = page.link_with(:text => "Envoyer un email") # As long as there is still a nextpage link...
+      page = link.click
+
+      form = page.forms.first
+
+      # EMAIL FORM INPUTS
+      form['name'] = 'Claire'
+      form['email'] = 'claire@gmail.com'
+      form['body'] = 'Je suis très intéressé par votre appartmement !'
+
+      page = form.submit
+      p "mail sent"
+
+
+    end
+  end
+end
+end
+scrap = Marmiton.new.scraping
+
+
+# https://www.leboncoin.fr/locations/offres/ile_de_france/paris/?th=1&location=Paris%2075011&parrot=0&mrs=1800&mre=2000&ros=3
+
+# https://www.leboncoin.fr/locations/offres/ile_de_france/paris/?th=1&location=Paris%2075015&parrot=0&mrs=1800&ros=3
+# https://www.leboncoin.fr/locations/offres/ile_de_france/paris/?o=1&mrs=1800&ros=3&location=Paris%2075015
