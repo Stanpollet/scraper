@@ -1,8 +1,9 @@
 require 'mechanize'
 
 mechanize = Mechanize.new
-
-page = mechanize.get('https://www.leboncoin.fr/locations/offres/centre/?th=1&parrot=0')
+# url to change according to the research
+url = ''
+page = mechanize.get(url)
 
 links = page.links.map(&:href)
 counter = 0
